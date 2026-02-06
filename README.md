@@ -1,3 +1,4 @@
+![CI](https://github.com/haxmeister/PAL/workflows/CI/badge.svg)
 # PAL - Perl Async for Linux
 
 Modern asynchronous programming framework for Perl on Linux.
