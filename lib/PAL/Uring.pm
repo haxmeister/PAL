@@ -388,8 +388,7 @@ Options:
 
 =cut
 
-# Timeout method disabled - requires Time::Spec
-# sub timeout {
+sub timeout {
     my ($self, %opts) = @_;
     
     my $seconds = delete $opts{seconds};
@@ -483,9 +482,9 @@ sub ring {
 }
 
 
-# Wrapper methods for direct IO::Uring access
+# Wrapper methods for compatibility with tests
 sub wait   { shift->{ring}->wait(@_) }
-sub submit { shift->{ring}->submit(@_) }
+sub submit { shift->{ring}->submit(@_) }  
 sub read   { shift->{ring}->read(@_) }
 sub write  { shift->{ring}->write(@_) }
 sub accept { shift->{ring}->accept(@_) }
