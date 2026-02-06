@@ -1146,6 +1146,10 @@ sub stop {
     $self->{active} = 0;
 }
 
+# Alias for compatibility
+sub cancel { shift->stop(@_) }
+
+
 sub start {
     my ($self) = @_;
     return if $self->{active};

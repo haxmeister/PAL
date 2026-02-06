@@ -264,6 +264,10 @@ sub parse_uevent {
     return \%event;
 }
 
+# Alias for compatibility
+sub parse_event { shift->parse_uevent(@_) }
+
+
 =head2 read_event
 
     my $event = $mon->read_event();
@@ -432,7 +436,8 @@ Events are hashrefs with these common fields:
 
 Plus device-specific fields that vary by subsystem:
 
-USB devices:
+=head3 USB devices
+
 =over 4
 
 =item * PRODUCT - USB vendor/product (e.g., 46d/c52b/111)
@@ -445,7 +450,8 @@ USB devices:
 
 =back
 
-Block devices:
+=head3 Block devices
+
 =over 4
 
 =item * DEVNAME - Device node name (e.g., sda, sda1)
@@ -458,7 +464,8 @@ Block devices:
 
 =back
 
-Network interfaces:
+=head3 Network interfaces
+
 =over 4
 
 =item * INTERFACE - Interface name (eth0, wlan0, etc.)
