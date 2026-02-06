@@ -158,7 +158,7 @@ sub new {
     my $max_events = delete $opts{max_events} || 32;
     
     my $self = bless {
-        uring => IO::Uring::Easy->new(queue_size => $queue_size),
+        uring => PAL::Uring->new(queue_size => $queue_size),
         max_events => $max_events,
         running => 0,
         stop_requested => 0,

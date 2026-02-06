@@ -3,6 +3,7 @@ package PAL::Uevent;
 use strict;
 use warnings;
 use Socket;
+use Fcntl;
 use Carp;
 
 our $VERSION = '0.001';

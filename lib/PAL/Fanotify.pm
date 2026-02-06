@@ -3,6 +3,7 @@ package PAL::Fanotify;
 use strict;
 use warnings;
 use Linux::Fanotify;
+use Fcntl qw(O_RDONLY O_LARGEFILE);
 use Carp qw(croak carp);
 use Scalar::Util qw(weaken);
 
@@ -128,7 +129,7 @@ sub new {
     # Create fanotify group
     my $group = Linux::Fanotify::FanotifyGroup->new(
         $init_flags,
-        Linux::Fanotify::O_RDONLY() | Linux::Fanotify::O_LARGEFILE()
+        O_RDONLY | O_LARGEFILE
     );
     
     unless ($group) {
