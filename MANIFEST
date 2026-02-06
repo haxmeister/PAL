@@ -1,3 +1,4 @@
+.github/workflows/ci.yml
 Changes
 Makefile.PL
 MANIFEST
@@ -12,3 +13,9 @@ t/loop-basic.t
 t/uring-basic.t
 t/fanotify-basic.t
 t/uevent-basic.t
+t/02-loop-comprehensive.t
+t/02-uring-comprehensive.t
+t/02-fanotify-comprehensive.t
+t/02-uevent-comprehensive.t
+t/99-integration.t
+t/pod-syntax.t
