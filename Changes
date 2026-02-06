@@ -1,0 +1,11 @@
+Revision history for PAL
+
+0.001    2026-02-06
+         - Initial release
+         - Complete PAL (Perl Async for Linux) framework in single distribution
+         - PAL::Loop - Event loop framework (was Linux::Event)
+         - PAL::Uring - Async I/O (was IO::Uring::Easy)
+         - PAL::Fanotify - Filesystem monitoring (was Linux::Fanotify::Easy)
+         - PAL::Uevent - Hardware events (was Linux::Uevent::Easy)
+         - Unified namespace and cohesive ecosystem
+         - Comprehensive documentation
