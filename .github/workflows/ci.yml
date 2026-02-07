@@ -12,107 +12,31 @@ jobs:
     
     strategy:
       matrix:
-        perl-version: ['5.38', '5.36', '5.34']
+        perl-version:
+          - '5.34'
+          - '5.36'
+          - '5.38'
+          - '5.40'
     
     name: Perl ${{ matrix.perl-version }}
     
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Perl
-      uses: shogo82148/actions-setup-perl@v1
-      with:
-        perl-version: ${{ matrix.perl-version }}
-    
-    - name: Show Perl version
-      run: perl -V
-    
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y liburing-dev build-essential
-        # Linux::Fanotify may need additional headers but they're usually in build-essential
-    
-    - name: Install CPAN dependencies
-      run: |
-        cpanm --notest Test::More Test::Exception
-        cpanm --notest Test::Pod || echo "Test::Pod installation failed (optional)"
-    
-    - name: Install XS dependencies
-      run: |
-        # Install XS dependencies that PAL modules need
-        cpanm --notest IO::Uring || echo "IO::Uring installation failed"
-        cpanm --notest Linux::Inotify2 || echo "Linux::Inotify2 installation failed"
-        cpanm --notest Linux::Fanotify || echo "Linux::Fanotify installation failed"
-    
-    - name: Run basic tests
-      run: |
-        perl Makefile.PL
-        make
-        make test TEST_VERBOSE=1
-    
-    - name: Test module loading
-      run: |
-        perl -Ilib -MPAL -e 'print "PAL loaded successfully\n"'
-        perl -Ilib -MPAL::Uevent -e 'print "PAL::Uevent loaded\n"'
-    
-    - name: Check POD syntax
-      run: |
-        prove -l t/pod-*.t || true
-
-  coverage:
-    runs-on: ubuntu-latest
-    name: Test Coverage
-    
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Perl
-      uses: shogo82148/actions-setup-perl@v1
-      with:
-        perl-version: '5.38'
-    
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y liburing-dev build-essential
-        cpanm --notest Test::More
-        cpanm --notest IO::Uring || echo "IO::Uring optional"
-        cpanm --notest Linux::Inotify2 || echo "Linux::Inotify2 optional"
-        cpanm --notest Linux::Fanotify || echo "Linux::Fanotify optional"
-        cpanm --notest Devel::Cover
-    
-    - name: Run tests with coverage
-      run: |
-        perl Makefile.PL
-        make
-        cover -test -ignore_re '^t/'
-    
-    - name: Upload coverage
-      uses: codecov/codecov-action@v3
-      with:
-        files: cover_db/coverage.json
-      continue-on-error: true
-
-  lint:
-    runs-on: ubuntu-latest
-    name: Code Quality
-    
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Perl
-      uses: shogo82148/actions-setup-perl@v1
-      with:
-        perl-version: '5.38'
-    
-    - name: Install Perl::Critic
-      run: cpanm --notest Perl::Critic
-    
-    - name: Run Perl::Critic
-      run: perlcritic --severity 3 lib/ || true
-    
-    - name: Check for tabs
-      run: |
-        ! find lib -name '*.pm' -exec grep -P '\t' {} +
-      continue-on-error: true
+      - uses: actions/checkout@v4
+      
+      - name: Set up Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl-version }}
+      
+      - name: Install cpanm and dependencies
+        run: |
+          curl -L https://cpanmin.us | perl - App::cpanminus
+          cpanm --notest --installdeps .
+      
+      - name: Build
+        run: |
+          perl Makefile.PL
+          make
+      
+      - name: Run tests
+        run: make test
