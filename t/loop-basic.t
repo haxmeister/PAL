@@ -3,6 +3,28 @@ use strict;
 use warnings;
 use Test::More;
 
+# Safety timeout - prevent hanging forever
+my $TIMEOUT = 5; # seconds
+
+sub run_with_timeout {
+    my ($loop, $test_name) = @_;
+    
+    local $SIG{ALRM} = sub {
+        fail("$test_name timed out after $TIMEOUT seconds - loop never stopped");
+        exit(1);
+    };
+    
+    alarm($TIMEOUT);
+    eval { $loop->run(); };
+    alarm(0);
+    
+    if ($@) {
+        fail("$test_name died: $@");
+        return 0;
+    }
+    return 1;
+}
+
 # Check if we can load the module
 BEGIN {
     use_ok('PAL::Loop') or BAIL_OUT("Cannot load PAL::Loop");
@@ -12,6 +34,12 @@ BEGIN {
 eval { require IO::Uring; };
 if ($@) {
     plan skip_all => 'IO::Uring not available (likely not on Linux with io_uring support)';
+}
+
+# Check if Time::Spec is available (required by IO::Uring)
+eval { require Time::Spec; };
+if ($@) {
+    plan skip_all => 'Time::Spec not available (required by IO::Uring->timeout)';
 }
 
 # Test basic constructor
@@ -46,7 +74,7 @@ if ($@) {
     isa_ok($timer, 'PAL::Loop::Watcher', 'timer returns watcher');
     ok($timer->is_active(), 'Timer is active');
     
-    $loop->run();
+    run_with_timeout($loop, 'Timer test');
     
     ok($fired, 'Timer callback fired');
     ok(!$timer->is_active(), 'Timer deactivated after firing');
@@ -72,7 +100,7 @@ if ($@) {
         }
     );
     
-    $loop->run();
+    run_with_timeout($loop, 'Periodic timer test');
     
     ok($count >= 2 && $count <= 4, "Periodic fired ~3 times (got $count)");
 }
@@ -91,7 +119,7 @@ if ($@) {
     
     push @order, 2;
     
-    $loop->run();
+    run_with_timeout($loop, 'Defer test');
     
     is_deeply(\@order, [1, 2, 3], 'Deferred callback ran after current code');
 }
@@ -115,7 +143,7 @@ if ($@) {
         cb => sub { $loop->stop() }
     );
     
-    $loop->run();
+    run_with_timeout($loop, 'Stopped watcher test');
     
     is($count, 0, 'Stopped watcher did not fire');
     
@@ -131,7 +159,7 @@ if ($@) {
         }
     );
     
-    $loop->run();
+    run_with_timeout($loop, 'Restarted watcher test');
     
     ok($count >= 1, 'Restarted watcher fired');
 }
@@ -152,7 +180,7 @@ if ($@) {
         }
     );
     
-    $loop->run();
+    run_with_timeout($loop, 'Watcher data test');
 }
 
 # Test priority (basic)
