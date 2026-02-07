@@ -16,7 +16,7 @@ WriteMakefile(
         'Carp'               => 0,
         'Scalar::Util'       => 0,
         'Time::HiRes'        => 0,
-        'Time::Spec'         => 0,
+
     },
     
     # Optional but recommended XS modules
