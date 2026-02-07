@@ -16,7 +16,9 @@ WriteMakefile(
         'Carp'               => 0,
         'Scalar::Util'       => 0,
         'Time::HiRes'        => 0,
-
+        # XS modules required for core functionality
+        'IO::Uring'          => 0,      # Required by PAL::Uring and PAL::Loop
+        'Linux::Fanotify'    => '1.2',  # Required by PAL::Fanotify
     },
     
     # Optional but recommended XS modules

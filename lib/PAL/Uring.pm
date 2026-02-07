@@ -396,8 +396,12 @@ sub timeout {
     my $on_timeout = delete $opts{on_timeout} || sub {};
     my $on_error = delete $opts{on_error} || sub { carp "Timeout error: $_[0]" };
     
-    require Time::Spec;
-    my $timespec = Time::Spec->new($seconds);
+    # Create timespec structure manually for maximum compatibility
+    # struct timespec { time_t tv_sec; long tv_nsec; }
+    # Using 'q' (signed quad/64-bit) for both fields to match Linux struct timespec
+    my $tv_sec = int($seconds);
+    my $tv_nsec = int(($seconds - $tv_sec) * 1_000_000_000);
+    my $timespec = pack("q q", $tv_sec, $tv_nsec);
     
     $self->{pending}++;
     
