@@ -18,7 +18,8 @@ WriteMakefile(
         'Time::HiRes'        => 0,
         # XS modules required for core functionality
         'IO::Uring'          => 0,      # Required by PAL::Uring and PAL::Loop
-        'Linux::Fanotify'    => '1.2',  # Required by PAL::Fanotify
+        'Time::Spec'         => 0,      # Required by IO::Uring->timeout()
+        'Linux::Fanotify'    => 0,      # Required by PAL::Fanotify (1.2+ recommended)
     },
     
     # Optional but recommended XS modules
