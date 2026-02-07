@@ -52,7 +52,6 @@ WriteMakefile(
                     'IO::Uring'          => 0,      # Any version
                     'Linux::Fanotify'    => '1.2',  # Version 1.2.0 exists
                     'Linux::Inotify2'    => 0,      # Any version
-                    'Time::Spec'         => 0,      # Required by IO::Uring->timeout()
                 },
             },
         },
